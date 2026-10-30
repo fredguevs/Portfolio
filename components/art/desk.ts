@@ -80,17 +80,15 @@ const rects: Rect[] = [
   [22, 6, 3, 1, cat],
   [22, 7, 1, 7, cat],
   [22, 14, 1, 1, catDark],
-  // breathing: an extra row on its back that comes and goes, and two z's
-  // floating up from its head (animated in globals.css)
+  // breathing: an extra row on its back that comes and goes, and two small z's
+  // floating up from its head, well clear of the monitor (animated in globals.css)
   [26, 2, 8, 1, cat, "breathe"],
-  [40, 3, 4, 1, "var(--pixel-ink)", "snore snore-1"],
-  [42, 4, 1, 1, "var(--pixel-ink)", "snore snore-1"],
-  [41, 5, 1, 1, "var(--pixel-ink)", "snore snore-1"],
-  [40, 6, 4, 1, "var(--pixel-ink)", "snore snore-1"],
-  [46, 1, 4, 1, "var(--pixel-ink)", "snore snore-2"],
-  [48, 2, 1, 1, "var(--pixel-ink)", "snore snore-2"],
-  [47, 3, 1, 1, "var(--pixel-ink)", "snore snore-2"],
-  [46, 4, 4, 1, "var(--pixel-ink)", "snore snore-2"],
+  [40, -2, 2, 1, "var(--pixel-ink)", "snore snore-1"],
+  [41, -1, 1, 1, "var(--pixel-ink)", "snore snore-1"],
+  [41, 0, 2, 1, "var(--pixel-ink)", "snore snore-1"],
+  [44, -5, 2, 1, "var(--pixel-ink)", "snore snore-2"],
+  [45, -4, 1, 1, "var(--pixel-ink)", "snore snore-2"],
+  [45, -3, 2, 1, "var(--pixel-ink)", "snore snore-2"],
 
   // keyboard
   [48, 28, 16, 2, keyboard],
@@ -126,9 +124,13 @@ const rects: Rect[] = [
   [82, 38, 6, 1, guitarDark],
 ];
 
+// The z's sit above the top of the drawing above, so everything moves down a few
+// rows to make room for them.
+const HEADROOM = 6;
+
 export const desk = {
   width: 96,
-  height: 46,
-  rects,
+  height: 46 + HEADROOM,
+  rects: rects.map(([x, y, w, h, fill, cls]) => [x, y + HEADROOM, w, h, fill, cls] as const),
   alt: "Pixel art of my desk: a monitor with a terminal open, a gray cat asleep on top of it, a lamp, a keyboard, a mug of coffee, and a guitar leaning beside the desk.",
 };
