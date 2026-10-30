@@ -1,4 +1,5 @@
 import { ArtSlot } from "@/components/ArtSlot";
+import { Desk } from "@/components/Desk";
 import type { ArtName } from "@/components/art";
 import { PageIntro } from "@/components/PageIntro";
 import { Section } from "@/components/Section";
@@ -16,7 +17,7 @@ const interests: { label: string; art: ArtName }[] = [
 export default function Home() {
   return (
     <>
-      <PageIntro art="desk" title="hi — i’m frederick">
+      <PageIntro picture={<Desk />} title="hi — i’m frederick">
         software engineer, working on warehouse automation.
       </PageIntro>
 

@@ -1,7 +1,10 @@
 import type { Rect } from "../Pixel";
 
-// The home page picture: my desk. Monitor with a terminal, the cat asleep on top of
-// it, a lamp, keyboard and coffee, and the guitar leaning on the right.
+// The home page picture: my desk. Monitor with a terminal, a lamp, keyboard and
+// coffee, and the guitar leaning on the right. The cat that sleeps on it is drawn
+// separately (sleepingCat, below) so it can be picked up: see components/Desk.tsx.
+// The monitor (cat-home) and the desk, lamp and keyboard (cat-bed) are where it
+// will curl up again if you put it back (see lib/surfaces.ts).
 
 const ink = "#2a2a2a";
 const frame = "#4f4f4f";
@@ -13,17 +16,17 @@ const deskHi = "#b88a5f";
 const deskTop = "#a77b52";
 const deskFront = "#8a6240";
 const deskDark = "#6b4a2f";
-const cat = "#8a8a8a";
-const catDark = "#6e6e6e";
-const mug = "#ececec";
+const cat = "var(--cat)";
+const catDark = "var(--cat-dark)";
+const mug = "var(--mug)";
 const mugStripe = "#c9503c";
-const steam = "#cfcfcf";
+const steam = "var(--steam)";
 const guitar = "#c8873a";
 const guitarDark = "#9a6226";
 const neck = "#5a3a22";
 const peg = "#dddddd";
-const keyboard = "#d4d4d4";
-const key = "#a6a6a6";
+const keyboard = "var(--keyboard)";
+const key = "var(--key)";
 const lamp = "#3c3c3c";
 const bulb = "#f2c94c";
 
@@ -32,14 +35,14 @@ const rects: Rect[] = [
   [0, 45, 96, 1, "var(--rule)"],
 
   // desk
-  [4, 30, 72, 1, deskHi],
+  [4, 30, 72, 1, deskHi, "cat-bed"],
   [4, 31, 72, 1, deskTop],
   [4, 32, 72, 2, deskFront],
   [7, 34, 3, 11, deskDark],
   [70, 34, 3, 11, deskDark],
 
   // lamp
-  [7, 28, 7, 2, lamp],
+  [7, 28, 7, 2, lamp, "cat-bed"],
   [10, 19, 1, 9, lamp],
   [11, 18, 1, 1, lamp],
   [12, 17, 1, 1, lamp],
@@ -49,7 +52,7 @@ const rects: Rect[] = [
   [14, 16, 4, 1, bulb],
 
   // monitor
-  [21, 8, 26, 18, frame],
+  [21, 8, 26, 18, frame, "cat-home"],
   [21, 8, 26, 1, frameHi],
   [23, 10, 22, 14, screen],
   [32, 26, 4, 3, frame],
@@ -69,29 +72,8 @@ const rects: Rect[] = [
   [25, 22, 1, 1, green],
   [28, 20, 2, 3, green, "blink"],
 
-  // the cat, asleep on the monitor, tail hanging down the front
-  [25, 3, 10, 1, cat],
-  [24, 4, 12, 4, cat],
-  [25, 7, 10, 1, catDark],
-  [34, 2, 5, 5, cat],
-  [34, 1, 1, 1, cat],
-  [38, 1, 1, 1, cat],
-  [36, 4, 2, 1, ink],
-  [22, 6, 3, 1, cat],
-  [22, 7, 1, 7, cat],
-  [22, 14, 1, 1, catDark],
-  // breathing: an extra row on its back that comes and goes, and two small z's
-  // floating up from its head, well clear of the monitor (animated in globals.css)
-  [26, 2, 8, 1, cat, "breathe"],
-  [40, -2, 2, 1, "var(--pixel-ink)", "snore snore-1"],
-  [41, -1, 1, 1, "var(--pixel-ink)", "snore snore-1"],
-  [41, 0, 2, 1, "var(--pixel-ink)", "snore snore-1"],
-  [44, -5, 2, 1, "var(--pixel-ink)", "snore snore-2"],
-  [45, -4, 1, 1, "var(--pixel-ink)", "snore snore-2"],
-  [45, -3, 2, 1, "var(--pixel-ink)", "snore snore-2"],
-
   // keyboard
-  [48, 28, 16, 2, keyboard],
+  [48, 28, 16, 2, keyboard, "cat-bed"],
   ...Array.from({ length: 8 }, (_, i) => [49 + i * 2, 28, 1, 1, key] as const),
 
   // coffee
@@ -132,5 +114,37 @@ export const desk = {
   width: 96,
   height: 46 + HEADROOM,
   rects: rects.map(([x, y, w, h, fill, cls]) => [x, y + HEADROOM, w, h, fill, cls] as const),
-  alt: "Pixel art of my desk: a monitor with a terminal open, a gray cat asleep on top of it, a lamp, a keyboard, a mug of coffee, and a guitar leaning beside the desk.",
+  alt: "Pixel art of my desk: a monitor with a terminal open, a lamp, a keyboard, a mug of coffee, and a guitar leaning beside the desk.",
+};
+
+// The cat, asleep, on its own 26×20 grid. Row 13 is whatever it's lying on.
+const sleeping: Rect[] = [
+  [4, 8, 10, 1, cat],
+  [3, 9, 12, 4, cat],
+  [4, 12, 10, 1, catDark],
+  [13, 7, 5, 5, cat],
+  [13, 6, 1, 1, cat],
+  [17, 6, 1, 1, cat],
+  [15, 9, 2, 1, ink],
+  // breathing: an extra row on its back that comes and goes, and two small z's
+  // floating up from its head (animated in globals.css)
+  [5, 7, 8, 1, cat, "breathe"],
+  [19, 3, 2, 1, "var(--pixel-ink)", "snore snore-1"],
+  [20, 4, 1, 1, "var(--pixel-ink)", "snore snore-1"],
+  [20, 5, 2, 1, "var(--pixel-ink)", "snore snore-1"],
+  [23, 0, 2, 1, "var(--pixel-ink)", "snore snore-2"],
+  [24, 1, 1, 1, "var(--pixel-ink)", "snore snore-2"],
+  [24, 2, 2, 1, "var(--pixel-ink)", "snore snore-2"],
+];
+
+export const sleepingCat = {
+  width: 26,
+  height: 20,
+  floor: 13,
+  middle: 10, // the middle of its body, across
+  // On the monitor, with its tail hanging down the front of it.
+  home: [...sleeping, [1, 11, 3, 1, cat], [1, 12, 1, 7, cat], [1, 19, 1, 1, catDark]] as Rect[],
+  homeAt: { x: 21, y: 1 }, // where the grid's corner sits in the desk drawing
+  // Anywhere else, with its tail curled round in front.
+  curled: [...sleeping, [1, 11, 3, 1, cat], [0, 12, 2, 1, cat], [0, 12, 1, 1, catDark]] as Rect[],
 };

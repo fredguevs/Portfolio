@@ -75,6 +75,31 @@ export function meow() {
   wobble.stop(end + 0.05);
 }
 
+// ---- Clack ----------------------------------------------------------------------
+//
+// Something from the shelf hitting the ground: a short knock that drops in pitch.
+// `loud` is 0 to 1, from how hard it landed.
+
+export function clack(loud: number) {
+  if (loud < 0.05) return;
+  const c = audio();
+  const t = c.currentTime;
+
+  const knock = c.createOscillator();
+  knock.type = "triangle";
+  knock.frequency.setValueAtTime(380 + Math.random() * 120, t);
+  knock.frequency.exponentialRampToValueAtTime(120, t + 0.08);
+
+  const out = c.createGain();
+  out.gain.setValueAtTime(0.0001, t);
+  out.gain.exponentialRampToValueAtTime(0.15 * loud, t + 0.004);
+  out.gain.exponentialRampToValueAtTime(0.0001, t + 0.11);
+  knock.connect(out).connect(c.destination);
+
+  knock.start(t);
+  knock.stop(t + 0.12);
+}
+
 // ---- The Victors ----------------------------------------------------------------
 //
 // The chorus of "The Victors" (Louis Elbel, 1898; public domain), played by a small
@@ -164,7 +189,7 @@ export function playVictors(onEnd: () => void) {
   const c = audio();
   const sources: AudioScheduledSourceNode[] = [];
 
-  // band → (dry + echo) → limiter → speakers
+  // band → (dry + echo) → limiter → volume → speakers
   const band = c.createGain();
   band.gain.value = 0.5;
   const limiter = c.createDynamicsCompressor();
@@ -175,7 +200,10 @@ export function playVictors(onEnd: () => void) {
   echoLevel.gain.value = 0.28;
   band.connect(limiter);
   band.connect(echo).connect(echoLevel).connect(limiter);
-  limiter.connect(c.destination);
+  // After the limiter, so turning this down doesn't just make it squash less.
+  const volume = c.createGain();
+  volume.gain.value = 0.5;
+  limiter.connect(volume).connect(c.destination);
 
   // A brass note: two slightly detuned sawtooths through a filter that opens as
   // the note starts, which is most of what makes synth brass sound like brass.
@@ -290,5 +318,93 @@ export function playVictors(onEnd: () => void) {
   sources.push(timer);
 
   stopCurrent = stop;
+  return stop;
+}
+
+// ---- Guitar ---------------------------------------------------------------------
+//
+// Four strummed chords: D, C, Bm, A7. Each string is a Karplus-Strong pluck: a burst
+// of noise fed round a delay line one period long, softened a little on every
+// trip, which is about the cheapest way to get something that sounds like a string.
+
+// Open-position shapes, low string to high, as MIDI notes.
+const strums = [
+  [50, 57, 62, 66], // D:  xx0232
+  [48, 52, 55, 60, 64], // C:  x32010
+  [47, 54, 59, 62, 66], // Bm: x24432
+  [45, 52, 55, 61, 64], // A7: x02020
+];
+const STRUM_GAP = 0.9; // seconds between chords
+const STRING_GAP = 0.014; // seconds between strings in one strum
+const RING = 2.2; // how long each chord's buffer lasts
+const GUITAR_VOLUME = 0.35;
+
+function pluckChord(c: AudioContext, notes: number[]) {
+  const sr = c.sampleRate;
+  const buffer = c.createBuffer(1, Math.ceil(sr * RING), sr);
+  const out = buffer.getChannelData(0);
+  notes.forEach((note, s) => {
+    const period = Math.round(sr / hz(note));
+    const line = new Float32Array(period);
+    // Smoothed noise: a pick, not a hammer.
+    let prev = 0;
+    for (let i = 0; i < period; i++) line[i] = prev = prev * 0.5 + (Math.random() * 2 - 1) * 0.5;
+    const offset = Math.round(s * STRING_GAP * sr);
+    for (let i = 0, p = 0; offset + i < out.length; i++) {
+      const next = (p + 1) % period;
+      const y = line[p];
+      line[p] = 0.996 * 0.5 * (y + line[next]);
+      out[offset + i] += y / notes.length;
+      p = next;
+    }
+  });
+  return buffer;
+}
+
+let stopStrum: (() => void) | null = null;
+
+// Strums the four chords and returns a function that stops them. `onChord` runs as
+// each chord is struck, and `onEnd` when the last one has rung out.
+export function strumGuitar(onChord: (i: number) => void, onEnd: () => void) {
+  stopStrum?.();
+  const c = audio();
+  const out = c.createGain();
+  out.gain.value = GUITAR_VOLUME;
+  out.connect(c.destination);
+
+  const start = c.currentTime + 0.05;
+  const players = strums.map((notes, i) => {
+    const player = c.createBufferSource();
+    player.buffer = pluckChord(c, notes);
+    player.connect(out);
+    player.start(start + i * STRUM_GAP);
+    return player;
+  });
+  const timers = strums.map((_, i) => setTimeout(() => onChord(i), (0.05 + i * STRUM_GAP) * 1000));
+  timers.push(
+    setTimeout(() => {
+      stop();
+      onEnd();
+    }, (0.05 + (strums.length - 1) * STRUM_GAP + RING) * 1000),
+  );
+
+  let stopped = false;
+  const stop = () => {
+    if (stopped) return;
+    stopped = true;
+    timers.forEach(clearTimeout);
+    out.gain.setTargetAtTime(0, c.currentTime, 0.03);
+    for (const p of players) {
+      try {
+        p.stop(c.currentTime + 0.15);
+      } catch {
+        // already stopped
+      }
+    }
+    setTimeout(() => out.disconnect(), 300);
+    if (stopStrum === stop) stopStrum = null;
+  };
+
+  stopStrum = stop;
   return stop;
 }

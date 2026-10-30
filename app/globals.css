@@ -13,6 +13,18 @@
   --pixel-ink: #2a2a2a;
   --cat: #8a8a8a;
   --cat-dark: #6e6e6e;
+  /* the desk's pale things (mug, steam, keyboard) go darker so they don't vanish into the paper */
+  --mug: #4f5d6b;
+  --steam: #b3afa5;
+  --keyboard: #8c8a84;
+  --key: #5e5c57;
+  /* and the same for the shelf's rocket and house on the projects page */
+  --ship: #6b7785;
+  --ship-window: #a9c8ec;
+  --house: #bf9f6e;
+  /* the letter and paper plane on the links page */
+  --paper: #a8a49a;
+  --paper-line: #6e6b64;
 }
 
 .dark {
@@ -24,6 +36,15 @@
   --pixel-ink: #5a5a5a;
   --cat: #9a9a9a;
   --cat-dark: #7a7a7a;
+  --mug: #ececec;
+  --steam: #cfcfcf;
+  --keyboard: #d4d4d4;
+  --key: #a6a6a6;
+  --ship: #ececec;
+  --ship-window: #3d6fb0;
+  --house: #d9c7a7;
+  --paper: #ececec;
+  --paper-line: #8a8a8a;
 }
 
 @theme inline {
@@ -194,7 +215,8 @@
 }
 
 /* The cat (components/Cat.tsx). Script moves it around; CSS swaps its two walking
-   frames while it walks, and shows the standing frame otherwise. */
+   frames while it walks, shows the paw-up frame while it swats something, and the
+   standing frame otherwise. */
 .cat svg {
   transition: rotate 150ms ease;
 }
@@ -203,8 +225,20 @@
   rotate: -12deg;
 }
 
-.cat-frame-a {
+.cat-frame-a,
+.cat-frame-swat,
+.cat[data-state="swat"] .cat-frame-b {
   opacity: 0;
+}
+
+.cat[data-state="swat"] .cat-frame-swat {
+  opacity: 1;
+}
+
+/* The cat asleep on the desk (components/Desk.tsx): you grab it by its body. */
+.nap-handle {
+  pointer-events: all;
+  cursor: grab;
 }
 
 .cat[data-state="walk"] .cat-frame-a {

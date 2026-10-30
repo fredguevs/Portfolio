@@ -22,7 +22,7 @@ export const conveyorHeight = 30;
 
 export const conveyorBase: Rect[] = [
   [0, 29, 96, 1, floor],
-  [4, 22, 88, 1, metalHi],
+  [4, 22, 88, 1, metalHi, "cat-belt"], // the cat rides this (lib/surfaces.ts)
   [4, 23, 88, 2, belt],
   ...Array.from({ length: 11 }, (_, i) => [6 + i * 8, 25, 3, 2, roller] as const),
   [10, 27, 2, 2, metal],
