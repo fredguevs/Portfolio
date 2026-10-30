@@ -103,39 +103,26 @@ const mailbox: Rect[] = [
   ...Array.from({ length: 5 }, (_, i) => [62 + i * 2, 10 - (i % 2), 1, 1, gray] as const),
 ];
 
-// A maize block M on a navy patch. Go Blue. Drawn as text: every M is maize.
-// Text characters are about twice as tall as they are wide, so each row is drawn
-// two pixels tall to keep the shape it has in a text editor.
-const blockMDrawing = [
-  "MMMMMMMMMMMMMMMM             MMMMMMMMMMMMMMMM",
-  "MMMMMMMMMMMMMMMMM           MMMMMMMMMMMMMMMMM",
-  "MMMMMMMMMMMMMMMMMM         MMMMMMMMMMMMMMMMMM",
-  "    MMMMMMMMMMMMMMMM     MMMMMMMMMMMMMMMM",
-  "    MMMMMMMMMMMMMMMMM   MMMMMMMMMMMMMMMMM",
-  "    MMMMMMMMMMM MMMMMM MMMMMMM MMMMMMMMMM",
-  "    MMMMMMMMMMM MMMMMMMMMMMMM  MMMMMMMMMM",
-  "    MMMMMMMMMMM  MMMMMMMMMMM   MMMMMMMMMM",
-  "    MMMMMMMMMMM    MMMMMMM     MMMMMMMMMM",
-  "    MMMMMMMMMMM     MMMMM      MMMMMMMMMM",
-  "    MMMMMMMMMMM      MMM       MMMMMMMMMM",
-  "MMMMMMMMMMMMMMMMMMM   M    MMMMMMMMMMMMMMMMMM",
-  "MMMMMMMMMMMMMMMMMMM        MMMMMMMMMMMMMMMMMM",
-  "MMMMMMMMMMMMMMMMMMM        MMMMMMMMMMMMMMMMMM",
-];
-const M_WIDTH = Math.max(...blockMDrawing.map((row) => row.length));
-const M_PAD_X = 2;
-const M_PAD_Y = 4;
-const M_PATCH_WIDTH = M_WIDTH + 2 * M_PAD_X;
-const M_PATCH_HEIGHT = blockMDrawing.length * 2 + 2 * M_PAD_Y;
-
+// A maize block M on a navy patch. Go Blue.
 const blockM: Rect[] = [
-  [0, 0, M_PATCH_WIDTH, M_PATCH_HEIGHT, navy],
-  // one rect per run of M's
-  ...blockMDrawing.flatMap((row, y) =>
-    [...row.matchAll(/M+/g)].map(
-      (run) => [run.index + M_PAD_X, y * 2 + M_PAD_Y, run[0].length, 2, maize] as const,
-    ),
-  ),
+  [0, 0, 26, 19, navy],
+  ...(
+    [
+      [0, 0, 8, 2],
+      [14, 0, 8, 2],
+      [2, 2, 4, 11],
+      [16, 2, 4, 11],
+      [0, 13, 8, 2],
+      [14, 13, 8, 2],
+      [6, 2, 3, 1],
+      [13, 2, 3, 1],
+      [7, 3, 3, 1],
+      [12, 3, 3, 1],
+      [8, 4, 6, 1],
+      [9, 5, 4, 1],
+      [10, 6, 2, 1],
+    ] as const
+  ).map(([x, y, w, h]) => [x + 2, y + 2, w, h, maize] as const),
 ];
 
 export const spots = {
@@ -152,8 +139,8 @@ export const spots = {
     alt: "Pixel art of a blue mailbox with its flag up and a letter sticking out, and a paper plane flying past.",
   },
   michigan: {
-    width: M_PATCH_WIDTH,
-    height: M_PATCH_HEIGHT,
+    width: 26,
+    height: 19,
     rects: blockM,
     alt: "Pixel art of the University of Michigan block M, maize on blue.",
   },
