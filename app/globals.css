@@ -1,0 +1,245 @@
+@import "tailwindcss";
+
+/* Dark mode follows a `.dark` class on <html>, set before paint by the script in layout.tsx. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Plain paper and ink. The pixel art brings the color; the page stays out of its way. */
+:root {
+  --bg: #f7f6f2;
+  --ink: #1c1c1c;
+  --muted: #666660;
+  --rule: #dcd9d1;
+  --accent: #3d7a55;
+  --pixel-ink: #2a2a2a;
+  --cat: #8a8a8a;
+  --cat-dark: #6e6e6e;
+}
+
+.dark {
+  --bg: #161616;
+  --ink: #e6e6e6;
+  --muted: #9a9a9a;
+  --rule: #333333;
+  --accent: #7fc79a;
+  --pixel-ink: #5a5a5a;
+  --cat: #9a9a9a;
+  --cat-dark: #7a7a7a;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-rule: var(--rule);
+  --color-accent: var(--accent);
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-pixel: var(--font-pixelify), var(--font-plex-sans), sans-serif;
+}
+
+/* Element defaults sit in the base layer so utilities can override them. */
+@layer base {
+  html {
+    color-scheme: light;
+    background: var(--bg);
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+  }
+
+  a:hover {
+    color: var(--accent);
+  }
+
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+}
+
+/* The terminal cursor in the desk picture. */
+.blink {
+  animation: blink 1.1s steps(1) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* The desk picture's moving parts (components/art/desk.ts). All in whole pixels of
+   the drawing, stepping rather than gliding, so they stay pixel art. */
+.steam,
+.snore {
+  transform-box: fill-box;
+  opacity: 0;
+}
+
+.steam {
+  animation: steam 2.4s steps(4) infinite;
+}
+
+.steam-2 {
+  animation-delay: 0.8s;
+}
+
+.steam-3 {
+  animation-delay: 1.6s;
+}
+
+@keyframes steam {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+/* The sleeping cat: its back rises for a breath and settles again. */
+.breathe {
+  animation: breathe 3.6s steps(1) infinite;
+}
+
+@keyframes breathe {
+  0% {
+    opacity: 0;
+  }
+  45% {
+    opacity: 1;
+  }
+}
+
+.snore {
+  animation: snore 3.6s steps(3) infinite;
+}
+
+.snore-2 {
+  animation-delay: 1.2s;
+}
+
+@keyframes snore {
+  0% {
+    opacity: 0;
+    transform: translateY(1px);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-1px);
+  }
+}
+
+/* The Michigan block M (components/VictorsButton.tsx) bobs while the song plays. */
+.victors {
+  transition: translate 100ms ease;
+}
+
+.victors:hover {
+  translate: 0 -2px;
+}
+
+.victors.is-playing svg {
+  animation: bob 0.42s steps(1) infinite;
+}
+
+@keyframes bob {
+  50% {
+    translate: 0 -3px;
+  }
+}
+
+/* The boxes on the conveyor (components/Conveyor.tsx): one pixel at a time, one full
+   loop every 16 seconds. In an SVG, px here means one pixel of the drawing. */
+.conveyor-move {
+  animation: conveyor 16s steps(96) infinite;
+}
+
+@keyframes conveyor {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(96px);
+  }
+}
+
+/* The cat (components/Cat.tsx). Script moves it around; CSS swaps its two walking
+   frames while it walks, and shows the standing frame otherwise. */
+.cat svg {
+  transition: rotate 150ms ease;
+}
+
+.cat[data-state="held"] svg {
+  rotate: -12deg;
+}
+
+.cat-frame-a {
+  opacity: 0;
+}
+
+.cat[data-state="walk"] .cat-frame-a {
+  animation: cat-frame 0.36s steps(1) infinite;
+}
+
+.cat[data-state="walk"] .cat-frame-b {
+  animation: cat-frame 0.36s steps(1) infinite reverse;
+}
+
+@keyframes cat-frame {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+
+  .blink,
+  .conveyor-move,
+  .breathe,
+  .snore,
+  .victors.is-playing svg {
+    animation: none;
+  }
+
+  /* Still show a wisp of steam, just not moving. */
+  .steam-1 {
+    animation: none;
+    opacity: 1;
+  }
+}

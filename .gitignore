@@ -1,0 +1,11 @@
+.DS_Store
+.taste-skill/
+node_modules/
+.env
+.env*.local
+
+# next
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
