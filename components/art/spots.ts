@@ -172,7 +172,7 @@ export const spots = {
     width: 96,
     height: 26,
     rects: shelf,
-    alt: "Pixel art of a shelf holding a video tape, a little house, a notebook, an asteroid and a rocket ship.",
+    alt: "Pixel art of a shelf holding a video tape, a little house, a notebook, an asteroid, and a rocket ship.",
   },
   mailbox: {
     width: 96,

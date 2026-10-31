@@ -13,6 +13,26 @@ const icons = {
       <path d="M1.5 3.5l6.5 5 6.5-5" fill="none" stroke="#000" />
     </>
   ),
+  // GitHub's cat in its circle, in the page's own colors so it flips with the theme.
+  github: (
+    <>
+      <path
+        d="M5 1h6v1h-6zM3 2h10v1h-10zM2 3h12v1h-12zM1 4h14v8h-14zM2 12h12v1h-12zM3 13h10v1h-10zM5 14h6v1h-6z"
+        fill="var(--ink)"
+      />
+      <path
+        d="M4 3h1v1h-1zM11 3h1v1h-1zM3 4h3v1h-3zM10 4h3v1h-3zM3 5h10v4h-10zM4 9h8v1h-8zM6 10h4v5h-4zM2 10h1v1h-1zM3 11h1v1h-1zM4 12h2v1h-2z"
+        fill="var(--bg)"
+      />
+    </>
+  ),
+  // The LinkedIn "in" on its blue square.
+  linkedin: (
+    <>
+      <path d="M2 1h12v1h1v12h-1v1H2v-1H1V2h1z" fill="#0a66c2" />
+      <path d="M4 4h2v2H4zM4 7h2v5H4zM7 7h4v1h1v4h-2V9H9v3H7z" fill="#fff" />
+    </>
+  ),
   sun: (
     <>
       <circle cx="8" cy="8" r="3.5" fill="#f2c200" stroke="#7a5c00" strokeWidth="0.75" />

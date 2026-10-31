@@ -5,13 +5,12 @@ import { PageIntro } from "@/components/PageIntro";
 import { Section } from "@/components/Section";
 
 const interests: { label: string; art: ArtName }[] = [
-  { label: "linux", art: "linux" },
-  { label: "programming", art: "programming" },
-  { label: "ai", art: "ai" },
-  { label: "automation", art: "automation" },
-  { label: "building tools", art: "tools" },
-  { label: "learning new things", art: "learning" },
+  { label: "singing", art: "singing" },
   { label: "guitar", art: "guitar" },
+  { label: "piano", art: "piano" },
+  { label: "all things related to The Beatles", art: "beatles" },
+  { label: "gaming", art: "gaming" },
+  { label: "cooking delicious food", art: "cooking" },
 ];
 
 export default function Home() {
@@ -21,21 +20,21 @@ export default function Home() {
         developer, music enthusiast, gamer
       </PageIntro>
 
-      <Section title="what i do">
+      <Section title="about me">
         <p>
-          I&rsquo;m a software systems engineer at <a href="https://www.knapp.com">KNAPP</a>.
-          I work on the C++ and XML workflows behind automated warehouse systems, dig
-          through Linux logs and Oracle SQL when something breaks, and write Bash and Python
-          scripts to automate testing.
+          I&rsquo;m an Atlanta-based software developer and a software engineer at{" "}
+          <a href="https://www.knapp.com">KNAPP</a>, where I work on automating supply
+          chain and intralogistics operations. Outside of work, I build full-stack web
+          applications.
         </p>
         <p>
           I studied computer science at the{" "}
-          <a href="https://umich.edu">University of Michigan</a> and graduated in 2025.
+          <a href="https://umich.edu">University of Michigan</a>. Go Blue!
         </p>
       </Section>
 
-      <Section title="things i like">
-        <ul className="grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3">
+      <Section title="other interests">
+        <ul className="space-y-3">
           {interests.map(({ label, art }) => (
             <li key={label} className="flex items-center gap-3">
               <ArtSlot name={art} decorative className="size-7 shrink-0" />
@@ -43,6 +42,17 @@ export default function Home() {
             </li>
           ))}
         </ul>
+      </Section>
+
+      <Section title="languages">
+        <div className="space-y-3 border-l-2 border-rule pl-4">
+          <p>
+            I&rsquo;m fluent in English and can speak conversational Russian/Русский.
+          </p>
+          <p className="text-[0.9375rem] text-muted">
+            I also know some Spanish from school, and very basic Tagalog.
+          </p>
+        </div>
       </Section>
     </>
   );

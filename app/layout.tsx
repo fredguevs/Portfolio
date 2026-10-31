@@ -7,7 +7,8 @@ import { site } from "@/content/site";
 import "./globals.css";
 
 const plexSans = IBM_Plex_Sans({
-  subsets: ["latin"],
+  // Cyrillic for "Русский" on the home page.
+  subsets: ["latin", "cyrillic"],
   weight: ["400", "600"],
   variable: "--font-plex-sans",
   display: "swap",

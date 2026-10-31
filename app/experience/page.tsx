@@ -19,11 +19,11 @@ export default function Experience() {
             <p className="text-muted">
               {job.role} · {job.where}
             </p>
-            <ul className="mt-3 list-disc space-y-1.5 pl-5 marker:text-muted">
-              {job.points.map((point) => (
-                <li key={point}>{point}</li>
+            <div className="mt-3 space-y-4">
+              {job.about.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
+            </div>
             {job.illustration === "conveyor" ? <Conveyor className="mt-8 w-full" /> : null}
           </div>
         ))}

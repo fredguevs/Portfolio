@@ -6,7 +6,8 @@ export type Job = {
   role: string;
   when: string;
   where: string;
-  points: string[];
+  // A paragraph or two about the job, in plain words. The resume has the bullet points.
+  about: string[];
   // A picture shown under the entry. Only the conveyor exists so far.
   illustration?: "conveyor";
 };
@@ -15,16 +16,13 @@ export const jobs: Job[] = [
   {
     company: "KNAPP",
     href: "https://www.knapp.com",
-    role: "Software Systems Engineer I",
+    role: "Software Engineer",
     when: "Mar 2026 – now",
     where: "Kennesaw, GA",
-    points: [
-      "Write and debug C++ application logic and XML-based Logistix workflows for warehouse control systems.",
-      "Track down production failures through Linux logs and traces, Oracle SQL and the C++ code.",
-      "Manage 500+ integration test cases, configuration changes and defects in Azure DevOps.",
-      "Supported Walmart's NGL warehouse expansion, troubleshooting distributed warehouse control components.",
-      "Built Bash, Python and Oracle SQL scripts for automated test workloads and performance diagnostics.",
-      "Ran high-volume tests at 700+ totes and 1,400+ carton-routing messages an hour.",
+    about: [
+      "KNAPP builds automated warehouses, and I work on the software that keeps them running: distributed C++ applications, Oracle databases, and Linux systems behind some very busy operations. A lot of my job is figuring out what went wrong. When something breaks in production, I follow it through the logs, the database, and the code until I find the root cause and get things moving again.",
+      "I also write Python and Bash tools to automate troubleshooting workflows, and I spend a lot of time in large codebases and workflow engines, working out how they behave, validating fixes, and supporting deployments. I work closely with controls engineers and customer teams to resolve integration issues across the system.",
+      "Most recently, I've been supporting Walmart's Next Generation Fulfillment center expansions, troubleshooting the distributed control components that route totes and cartons through those sites.",
     ],
     illustration: "conveyor",
   },

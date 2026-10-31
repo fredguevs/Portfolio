@@ -16,11 +16,11 @@ export type ElsewhereLink = {
 
 export const elsewhere: ElsewhereLink[] = [
   { label: "Email", href: "mailto:fredguevs@gmail.com", display: "fredguevs@gmail.com", icon: "envelope" },
-  { label: "GitHub", href: "https://github.com/fredguevs", display: "github.com/fredguevs", icon: "globe" },
+  { label: "GitHub", href: "https://github.com/fredguevs", display: "github.com/fredguevs", icon: "github" },
   {
     label: "LinkedIn",
     href: "https://www.linkedin.com/in/fredguevs",
     display: "linkedin.com/in/fredguevs",
-    icon: "globe",
+    icon: "linkedin",
   },
 ];
