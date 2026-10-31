@@ -100,6 +100,107 @@ export function clack(loud: number) {
   knock.stop(t + 0.12);
 }
 
+// ---- Switch ---------------------------------------------------------------------
+//
+// The desk lamp's switch: a tiny burst of filtered noise (the snap) on top of a
+// short knock (the plastic). Clicking it on is a touch higher than clicking it off,
+// like a real rocker switch.
+
+export function flick(on: boolean) {
+  const c = audio();
+  const t = c.currentTime;
+
+  const length = Math.ceil(c.sampleRate * 0.03);
+  const noise = c.createBuffer(1, length, c.sampleRate);
+  const data = noise.getChannelData(0);
+  for (let i = 0; i < length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / length) ** 4;
+  const snap = c.createBufferSource();
+  snap.buffer = noise;
+  const crisp = c.createBiquadFilter();
+  crisp.type = "bandpass";
+  crisp.frequency.value = on ? 3800 : 3000;
+  crisp.Q.value = 1.5;
+  const snapLevel = c.createGain();
+  snapLevel.gain.value = 0.5;
+  snap.connect(crisp).connect(snapLevel).connect(c.destination);
+
+  const knock = c.createOscillator();
+  knock.type = "triangle";
+  knock.frequency.setValueAtTime(on ? 1700 : 1300, t);
+  knock.frequency.exponentialRampToValueAtTime(on ? 600 : 450, t + 0.025);
+  const out = c.createGain();
+  out.gain.setValueAtTime(0.0001, t);
+  out.gain.exponentialRampToValueAtTime(0.12, t + 0.002);
+  out.gain.exponentialRampToValueAtTime(0.0001, t + 0.04);
+  knock.connect(out).connect(c.destination);
+
+  snap.start(t);
+  knock.start(t);
+  knock.stop(t + 0.05);
+}
+
+// ---- Cardboard ------------------------------------------------------------------
+//
+// A carton on the conveyor. Opening it rips the tape (a scratchy burst of noise
+// that rises in pitch) and then the flaps flop out; closing it is just the flop: a
+// dull thump of low noise and a falling knock.
+
+function noiseBurst(c: AudioContext, seconds: number, crackle: boolean) {
+  const length = Math.ceil(c.sampleRate * seconds);
+  const buffer = c.createBuffer(1, length, c.sampleRate);
+  const data = buffer.getChannelData(0);
+  let grain = 1;
+  for (let i = 0; i < length; i++) {
+    // Tape comes off in little jerks: the level jumps around every few ms.
+    if (crackle && i % 96 === 0) grain = 0.3 + Math.random() * 0.7;
+    data[i] = (Math.random() * 2 - 1) * grain * (1 - i / length) ** (crackle ? 0.6 : 3);
+  }
+  const source = c.createBufferSource();
+  source.buffer = buffer;
+  return source;
+}
+
+export function cardboard(open: boolean) {
+  const c = audio();
+  const t = c.currentTime;
+  let flop = t;
+
+  if (open) {
+    const rip = noiseBurst(c, 0.16, true);
+    const scratch = c.createBiquadFilter();
+    scratch.type = "bandpass";
+    scratch.Q.value = 0.9;
+    scratch.frequency.setValueAtTime(1800, t);
+    scratch.frequency.exponentialRampToValueAtTime(4200, t + 0.16);
+    const level = c.createGain();
+    level.gain.value = 0.22;
+    rip.connect(scratch).connect(level).connect(c.destination);
+    rip.start(t);
+    flop = t + 0.17;
+  }
+
+  const thump = noiseBurst(c, 0.07, false);
+  const dull = c.createBiquadFilter();
+  dull.type = "lowpass";
+  dull.frequency.value = 500;
+  const thumpLevel = c.createGain();
+  thumpLevel.gain.value = 0.6;
+  thump.connect(dull).connect(thumpLevel).connect(c.destination);
+  thump.start(flop);
+
+  const knock = c.createOscillator();
+  knock.type = "triangle";
+  knock.frequency.setValueAtTime(170, flop);
+  knock.frequency.exponentialRampToValueAtTime(70, flop + 0.07);
+  const out = c.createGain();
+  out.gain.setValueAtTime(0.0001, flop);
+  out.gain.exponentialRampToValueAtTime(0.18, flop + 0.005);
+  out.gain.exponentialRampToValueAtTime(0.0001, flop + 0.09);
+  knock.connect(out).connect(c.destination);
+  knock.start(flop);
+  knock.stop(flop + 0.1);
+}
+
 // ---- The Victors ----------------------------------------------------------------
 //
 // The chorus of "The Victors" (Louis Elbel, 1898; public domain), played by a small
@@ -323,20 +424,21 @@ export function playVictors(onEnd: () => void) {
 
 // ---- Guitar ---------------------------------------------------------------------
 //
-// Four strummed chords: D, C, Bm, A7. Each string is a Karplus-Strong pluck: a burst
-// of noise fed round a delay line one period long, softened a little on every
-// trip, which is about the cheapest way to get something that sounds like a string.
+// One strummed chord per click, round and round: D, Bm, Em, A7. Each string is a
+// Karplus-Strong pluck: a burst of noise fed round a delay line one period long,
+// softened a little on every trip, which is about the cheapest way to get something
+// that sounds like a string.
 
 // Open-position shapes, low string to high, as MIDI notes.
 const strums = [
   [50, 57, 62, 66], // D:  xx0232
-  [48, 52, 55, 60, 64], // C:  x32010
   [47, 54, 59, 62, 66], // Bm: x24432
+  [40, 47, 52, 55, 59, 64], // Em: 022000
   [45, 52, 55, 61, 64], // A7: x02020
 ];
-const STRUM_GAP = 0.9; // seconds between chords
+export const GUITAR_CHORDS = strums.length;
 const STRING_GAP = 0.014; // seconds between strings in one strum
-const RING = 2.2; // how long each chord's buffer lasts
+const RING = 2.2; // how long a chord rings if you leave it
 const GUITAR_VOLUME = 0.35;
 
 function pluckChord(c: AudioContext, notes: number[]) {
@@ -361,54 +463,40 @@ function pluckChord(c: AudioContext, notes: number[]) {
   return buffer;
 }
 
-let stopStrum: (() => void) | null = null;
+let stopRinging: (() => void) | null = null;
 
-// Strums the four chords and returns a function that stops them. `onChord` runs as
-// each chord is struck, and `onEnd` when the last one has rung out.
-export function strumGuitar(onChord: (i: number) => void, onEnd: () => void) {
-  stopStrum?.();
+// Strums chord `i` and returns a function that stops it. Whatever was still ringing
+// is muted first, like changing chords on a real guitar. `onEnd` runs when this
+// chord has rung out by itself (not when another one cuts it off).
+export function strumChord(i: number, onEnd: () => void) {
+  stopRinging?.();
   const c = audio();
   const out = c.createGain();
   out.gain.value = GUITAR_VOLUME;
   out.connect(c.destination);
 
-  const start = c.currentTime + 0.05;
-  const players = strums.map((notes, i) => {
-    const at = start + i * STRUM_GAP;
-    const player = c.createBufferSource();
-    player.buffer = pluckChord(c, notes);
-    // Changing chords mutes the strings that were ringing.
-    const hand = c.createGain();
-    if (i < strums.length - 1) hand.gain.setTargetAtTime(0, at + STRUM_GAP, 0.02);
-    player.connect(hand).connect(out);
-    player.start(at);
-    return player;
-  });
-  const timers = strums.map((_, i) => setTimeout(() => onChord(i), (0.05 + i * STRUM_GAP) * 1000));
-  timers.push(
-    setTimeout(() => {
-      stop();
-      onEnd();
-    }, (0.05 + (strums.length - 1) * STRUM_GAP + RING) * 1000),
-  );
+  const player = c.createBufferSource();
+  player.buffer = pluckChord(c, strums[i % strums.length]);
+  player.connect(out);
+  player.start();
+  player.onended = () => {
+    if (stopped) return;
+    stopped = true;
+    out.disconnect();
+    if (stopRinging === stop) stopRinging = null;
+    onEnd();
+  };
 
   let stopped = false;
   const stop = () => {
     if (stopped) return;
     stopped = true;
-    timers.forEach(clearTimeout);
-    out.gain.setTargetAtTime(0, c.currentTime, 0.03);
-    for (const p of players) {
-      try {
-        p.stop(c.currentTime + 0.15);
-      } catch {
-        // already stopped
-      }
-    }
-    setTimeout(() => out.disconnect(), 300);
-    if (stopStrum === stop) stopStrum = null;
+    out.gain.setTargetAtTime(0, c.currentTime, 0.02);
+    player.stop(c.currentTime + 0.1);
+    setTimeout(() => out.disconnect(), 200);
+    if (stopRinging === stop) stopRinging = null;
   };
 
-  stopStrum = stop;
+  stopRinging = stop;
   return stop;
 }

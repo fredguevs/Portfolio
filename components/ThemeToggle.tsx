@@ -1,32 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
+import { theme, toggleTheme } from "@/lib/theme";
 import { Icon } from "./Icon";
 
 // The initial class is set by the inline script in layout.tsx, before React loads,
-// so there's no flash. This button just flips it and remembers the choice.
+// so there's no flash. This button just flips it (so does the lamp on the desk).
 export function ThemeToggle() {
-  const [dark, setDark] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    setDark(document.documentElement.classList.contains("dark"));
-  }, []);
-
-  function toggle() {
-    const next = !dark;
-    document.documentElement.classList.toggle("dark", next);
-    try {
-      localStorage.setItem("theme", next ? "dark" : "light");
-    } catch {
-      // Private mode or blocked storage: the toggle still works for this visit.
-    }
-    setDark(next);
-  }
+  const dark = useSyncExternalStore(theme.subscribe, theme.get, theme.getServer);
 
   return (
     <button
       type="button"
-      onClick={toggle}
+      onClick={toggleTheme}
       className="flex size-6 cursor-pointer items-center justify-center"
       aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
       title={dark ? "Lights on" : "Lights off"}

@@ -136,9 +136,10 @@ function clipEdge(r: SVGRectElement) {
 }
 
 // How far the belt's moving layer (marked data-belt) has slid since last time, in px.
+// It loops every data-loop units of the drawing (or its whole width).
 function beltDrift(svg: SVGSVGElement) {
   const layer = svg.querySelector("[data-belt]");
-  const loop = svg.viewBox.baseVal.width;
+  const loop = Number(layer?.getAttribute("data-loop")) || svg.viewBox.baseVal.width;
   let last: number | null = null;
   return () => {
     if (!layer) return 0;
@@ -146,7 +147,7 @@ function beltDrift(svg: SVGSVGElement) {
     const offset = t === "none" ? 0 : new DOMMatrix(t).e;
     const moved = last === null ? 0 : (((offset - last) % loop) + loop) % loop;
     last = offset;
-    return moved * (svg.getBoundingClientRect().width / loop);
+    return moved * (svg.getBoundingClientRect().width / svg.viewBox.baseVal.width);
   };
 }
 

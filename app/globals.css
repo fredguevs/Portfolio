@@ -18,6 +18,10 @@
   --steam: #b3afa5;
   --keyboard: #8c8a84;
   --key: #5e5c57;
+  /* the desk lamp: off in daylight (a dull bulb and no light), on at night */
+  --bulb: #b8ad92;
+  --lamp-light: #ffcf5c;
+  --lamp-glow: 0;
   /* and the same for the shelf's rocket and house on the projects page */
   --ship: #6b7785;
   --ship-window: #a9c8ec;
@@ -40,6 +44,8 @@
   --steam: #cfcfcf;
   --keyboard: #d4d4d4;
   --key: #a6a6a6;
+  --bulb: #fff0b8;
+  --lamp-glow: 0.2;
   --ship: #ececec;
   --ship-window: #3d6fb0;
   --house: #d9c7a7;
@@ -199,10 +205,53 @@
   }
 }
 
-/* The boxes on the conveyor (components/Conveyor.tsx): one pixel at a time, one full
-   loop every 16 seconds. In an SVG, px here means one pixel of the drawing. */
+/* The guitar by the desk (components/GuitarButton.tsx) bobs while it's being
+   strummed, and a music note floats up out of the sound hole on every chord. The
+   button is invisible; what moves is the guitar's pixels in the desk drawing. */
+.desk:has(.guitar.is-playing) .guitar-art {
+  animation: bob 0.45s steps(1) infinite;
+}
+
+.desk:has(.guitar:hover) .guitar-art {
+  translate: 0 -1px;
+}
+
+/* Five drawing pixels wide (the guitar box is twelve), sitting on the sound hole. */
+.guitar-note {
+  left: 29%;
+  top: 45%;
+  width: 42%;
+  animation: guitar-note 1.4s steps(14) forwards;
+}
+
+@keyframes guitar-note {
+  70% {
+    opacity: 1;
+  }
+  100% {
+    translate: var(--drift) -200%;
+    opacity: 0;
+  }
+}
+
+/* The desk lamp's light (components/art/desk.ts), and the invisible button over
+   the lamp that switches the theme (components/LampButton.tsx). The core stacks on
+   the cone, so it comes out about twice as bright. Switching fades it in a few
+   steps; hovering the lamp while it's on turns it up a little. */
+.lamp-light {
+  opacity: var(--lamp-glow);
+  transition: opacity 0.4s steps(4);
+}
+
+.desk:has(.lamp:hover) .lamp-light {
+  opacity: calc(var(--lamp-glow) * 1.4);
+}
+
+/* The things on the conveyor (components/Conveyor.tsx): one pixel at a time, six a
+   second, round a loop of 112 (conveyorLoop in components/art/conveyor.ts). In an
+   SVG, px here means one pixel of the drawing. */
 .conveyor-move {
-  animation: conveyor 16s steps(96) infinite;
+  animation: conveyor 18.67s steps(112) infinite;
 }
 
 @keyframes conveyor {
@@ -210,7 +259,55 @@
     transform: translateX(0);
   }
   to {
-    transform: translateX(96px);
+    transform: translateX(112px);
+  }
+}
+
+/* The scanner's light blinks green for four steps as the front of each carton (and
+   the tote) reaches the laser. Same length as the belt's loop so they stay in step;
+   the percentages are the steps where that happens, out of 112. */
+.scan-light {
+  animation: scan-read 18.67s step-end infinite;
+}
+
+@keyframes scan-read {
+  0%,
+  14.29%,
+  33.93%,
+  64.29%,
+  89.29% {
+    fill: #2e3a30;
+  }
+  10.71%,
+  30.36%,
+  60.71%,
+  85.71% {
+    fill: #5fd16a;
+  }
+}
+
+.scan-beam {
+  opacity: 0.7;
+}
+
+/* The cartons open when you click them, and whatever's inside pops up. */
+.carton {
+  cursor: pointer;
+  outline: none;
+}
+
+.carton:focus-visible > rect:first-of-type {
+  stroke: var(--accent);
+  stroke-width: 0.5px;
+}
+
+.carton-item {
+  animation: carton-pop 0.3s steps(4) both;
+}
+
+@keyframes carton-pop {
+  from {
+    translate: 0 var(--rise);
   }
 }
 
@@ -265,10 +362,19 @@
 
   .blink,
   .conveyor-move,
+  .scan-light,
+  .carton-item,
   .breathe,
   .snore,
-  .victors.is-playing svg {
+  .victors.is-playing svg,
+  .desk:has(.guitar.is-playing) .guitar-art {
     animation: none;
+  }
+
+  /* The notes still appear, just above the sound hole instead of floating up. */
+  .guitar-note {
+    animation: none;
+    translate: var(--drift) -120%;
   }
 
   /* Still show a wisp of steam, just not moving. */
