@@ -17,13 +17,9 @@ const interests: { label: string; art: ArtName }[] = [
 export default function Home() {
   return (
     <>
-      <PageIntro picture={<Desk />} title="hi — i’m frederick">
-        software engineer, working on warehouse automation.
+      <PageIntro picture={<Desk />} title="hi! i’m frederick">
+        developer, music enthusiast, gamer
       </PageIntro>
-
-      <p className="mt-8">
-        This is where I keep the things I&rsquo;ve made and the things I&rsquo;m into.
-      </p>
 
       <Section title="what i do">
         <p>

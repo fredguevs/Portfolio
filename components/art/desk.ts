@@ -11,9 +11,12 @@ import type { Rect } from "../Pixel";
 const ink = "#2a2a2a";
 const frame = "#4f4f4f";
 const frameHi = "#6a6a6a";
-const screen = "#12261b";
-const green = "#6fcf8f";
-const dimGreen = "#3f8f5c";
+// The terminal is in gruvbox, light or dark to match the page (globals.css).
+const screen = "var(--term-bg)";
+const prompt = "var(--term-prompt)";
+const text = "var(--term-text)";
+const text2 = "var(--term-text-2)";
+const cursor = "var(--term-cursor)";
 const deskHi = "#b88a5f";
 const deskTop = "#a77b52";
 const deskFront = "#8a6240";
@@ -78,18 +81,18 @@ const rects: Rect[] = [
   [28, 29, 12, 1, frame, "screen-art"],
 
   // terminal: three prompts and a blinking cursor
-  [25, 12, 1, 1, green, "screen-art"],
-  [26, 13, 1, 1, green, "screen-art"],
-  [25, 14, 1, 1, green, "screen-art"],
-  [28, 13, 9, 1, dimGreen, "screen-art"],
-  [25, 16, 1, 1, green, "screen-art"],
-  [26, 17, 1, 1, green, "screen-art"],
-  [25, 18, 1, 1, green, "screen-art"],
-  [28, 17, 12, 1, dimGreen, "screen-art"],
-  [25, 20, 1, 1, green, "screen-art"],
-  [26, 21, 1, 1, green, "screen-art"],
-  [25, 22, 1, 1, green, "screen-art"],
-  [28, 20, 2, 3, green, "blink"],
+  [25, 12, 1, 1, prompt, "screen-art"],
+  [26, 13, 1, 1, prompt, "screen-art"],
+  [25, 14, 1, 1, prompt, "screen-art"],
+  [28, 13, 9, 1, text, "screen-art"],
+  [25, 16, 1, 1, prompt, "screen-art"],
+  [26, 17, 1, 1, prompt, "screen-art"],
+  [25, 18, 1, 1, prompt, "screen-art"],
+  [28, 17, 12, 1, text2, "screen-art"],
+  [25, 20, 1, 1, prompt, "screen-art"],
+  [26, 21, 1, 1, prompt, "screen-art"],
+  [25, 22, 1, 1, prompt, "screen-art"],
+  [28, 20, 2, 3, cursor, "blink"],
 
   // keyboard
   [48, 28, 16, 2, keyboard, "cat-bed"],

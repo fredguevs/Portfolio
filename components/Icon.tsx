@@ -7,15 +7,6 @@ const icons = {
       <path d="M4 5h3v2H5v2H3.5V6zM9 9h3v3h-2v-1H9zM9 3.5h2V5H9z" fill="#2f9e44" />
     </>
   ),
-  resume: (
-    <>
-      <path d="M3.5 1.5h6l3 3v10h-9z" fill="#fff" stroke="#000" />
-      <path d="M9.5 1.5v3h3" fill="none" stroke="#000" />
-      <rect x="5" y="6" width="6" height="2" fill="#c00000" />
-      <rect x="5" y="9.5" width="6" height="1" fill="#808080" />
-      <rect x="5" y="11.5" width="4" height="1" fill="#808080" />
-    </>
-  ),
   envelope: (
     <>
       <rect x="1.5" y="3.5" width="13" height="9" fill="#fff" stroke="#000" />

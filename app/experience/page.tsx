@@ -10,9 +10,7 @@ export const metadata: Metadata = { title: "Experience" };
 export default function Experience() {
   return (
     <>
-      <PageIntro title="experience">
-        the short version. the full one is in my <a href="/resume.pdf">resume</a>.
-      </PageIntro>
+      <PageIntro title="experience" />
 
       <Section title="work">
         {jobs.map((job) => (

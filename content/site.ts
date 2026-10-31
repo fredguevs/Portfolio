@@ -23,5 +23,4 @@ export const elsewhere: ElsewhereLink[] = [
     display: "linkedin.com/in/fredguevs",
     icon: "globe",
   },
-  { label: "Resume", href: "/resume.pdf", display: "resume.pdf", icon: "resume" },
 ];

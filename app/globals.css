@@ -22,6 +22,12 @@
   --bulb: #b8ad92;
   --lamp-light: #ffcf5c;
   --lamp-glow: 0;
+  /* the desk's terminal, in gruvbox light (and gruvbox dark below) */
+  --term-bg: #fbf1c7;
+  --term-prompt: #79740e;
+  --term-text: #3c3836;
+  --term-text-2: #427b58;
+  --term-cursor: #af3a03;
   /* and the same for the shelf's rocket and house on the projects page */
   --ship: #6b7785;
   --ship-window: #a9c8ec;
@@ -46,6 +52,11 @@
   --key: #a6a6a6;
   --bulb: #fff0b8;
   --lamp-glow: 0.2;
+  --term-bg: #282828;
+  --term-prompt: #b8bb26;
+  --term-text: #ebdbb2;
+  --term-text-2: #8ec07c;
+  --term-cursor: #fe8019;
   --ship: #ececec;
   --ship-window: #3d6fb0;
   --house: #d9c7a7;
@@ -103,6 +114,13 @@
     outline: 2px solid var(--accent);
     outline-offset: 3px;
   }
+}
+
+/* The terminal in the desk picture fades between its light and dark gruvbox in a
+   few steps when the theme switches, like the lamp. */
+.desk .screen-art,
+.desk .blink {
+  transition: fill 0.4s steps(4);
 }
 
 /* The terminal cursor in the desk picture. */

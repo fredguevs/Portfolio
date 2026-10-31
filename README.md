@@ -2,7 +2,7 @@
 
 My personal site: who I am, what I've built, and where I work. It's built with Next.js and exported as plain static HTML.
 
-Every picture on the site is pixel art drawn in code, and every sound is generated in the browser. There are no image or audio files besides the favicon and my resume.
+Every picture on the site is pixel art drawn in code, and every sound is generated in the browser. There are no image or audio files besides the favicon.
 
 ## Things to try
 
@@ -43,7 +43,6 @@ npm start          # serve out/ locally
 
 - **Projects, jobs, skills, links:** edit the files in `content/`. Each one has a comment at the top explaining its format.
 - **Swapping a drawing for an image:** put a PNG in `public/art/` and set `src` on that drawing's entry in `components/art/index.ts`.
-- **Resume:** replace `public/resume.pdf`.
 
 ## Deploying
 
