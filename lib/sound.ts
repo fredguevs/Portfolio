@@ -374,10 +374,14 @@ export function strumGuitar(onChord: (i: number) => void, onEnd: () => void) {
 
   const start = c.currentTime + 0.05;
   const players = strums.map((notes, i) => {
+    const at = start + i * STRUM_GAP;
     const player = c.createBufferSource();
     player.buffer = pluckChord(c, notes);
-    player.connect(out);
-    player.start(start + i * STRUM_GAP);
+    // Changing chords mutes the strings that were ringing.
+    const hand = c.createGain();
+    if (i < strums.length - 1) hand.gain.setTargetAtTime(0, at + STRUM_GAP, 0.02);
+    player.connect(hand).connect(out);
+    player.start(at);
     return player;
   });
   const timers = strums.map((_, i) => setTimeout(() => onChord(i), (0.05 + i * STRUM_GAP) * 1000));
