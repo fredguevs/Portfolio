@@ -20,6 +20,7 @@ export const projects: Project[] = [
     description:
       "A web app for looping sections of videos. Custom player with keyboard controls and timeline scrubbing, media on S3 and CloudFront, sign-in with Supabase.",
     stack: ["React", "Tailwind", "Express", "AWS", "Supabase"],
+    live: "https://videolooper.io",
   },
   {
     title: "Cost of Living Explorer",
